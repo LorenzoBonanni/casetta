@@ -1,0 +1,8 @@
+name: casetta
+channels:
+  - defaults
+dependencies:
+  - python=3.12
+  - pip:
+      - matplotlib==3.10.0
+      - numpy==1.26.4
