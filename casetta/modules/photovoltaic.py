@@ -1,13 +1,25 @@
-class PhotovoltaicPanel:
-    def __init__(self, num_modules=8, wp=420):
-        self.num_modules = num_modules
-        self.wp = wp  # Rated power (Wp) per module
-        self.time_step = 5  # Time step in minutes
+from casetta.modules.base_module import BaseModule
 
-    def power_output(self, irradiance):
+
+class PhotovoltaicPanel(BaseModule):
+    def __init__(self, config):
+        super().__init__(config)
+        self.num_modules = config['photovoltaic']['num_modules'] # Number of modules
+        self.wp = config['photovoltaic']['rated_power']  # Rated power in Wp (Watts peak)
+        self.time_step = config['time_step']  # Time step in minutes
+
+    def step(self, current, action):
         """
-        Calculate the output power in Watts.
-        Irradiance is scaled relative to 1000 W/m².
+        Compute the power output based on current irradiance.
         """
-        total_rating = self.wp * self.num_modules
-        return total_rating * (irradiance / 1000)
+        irradiance = current['irradiance']
+
+        power_output = irradiance * self.wp * self.num_modules / 1000  # kW
+        energy_produced = power_output * (self.time_step / 60)  # kWh
+        return energy_produced
+
+    def reset(self):
+        """
+        Reset the photovoltaic panel module to its initial state.
+        """
+        pass

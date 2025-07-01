@@ -20,24 +20,17 @@ class BuildingOutput:
     minute: int
     domestic_hot_water_request: float
 
-    def to_numpy(self):
-        return np.array(
-            [
-                self.non_shiftable_load,
-                self.internal_temperature,
-                self.external_temperature,
-                self.ground_temperature,
-                self.solar_irradiation,
-                self.thermal_set_point,
-                self.weekday,
-                self.day,
-                self.month,
-                self.year,
-                self.hour,
-                self.minute,
-                self.domestic_hot_water_request
-            ]
-        )
+@dataclass
+class GridOutput:
+    buy_price: float
+    sell_price: float
+    sold_energy: float
+    bought_energy: float
 
-    def __copy__(self):
-        return deepcopy(self)
+@dataclass
+class ElectricBatteryOutput:
+    soc: float
+    stored_energy: float
+    battery2house_energy: float
+    battery2grid_energy: float
+    grid2battery_energy: float
