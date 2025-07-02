@@ -1,7 +1,4 @@
-from copy import deepcopy
 from dataclasses import dataclass
-
-import numpy as np
 
 
 @dataclass
@@ -19,6 +16,8 @@ class BuildingOutput:
     hour: int
     minute: int
     domestic_hot_water_request: float
+    unmet_energy_load: float
+    consumed_energy: float
 
 @dataclass
 class GridOutput:
@@ -31,6 +30,9 @@ class GridOutput:
 class ElectricBatteryOutput:
     soc: float
     stored_energy: float
-    battery2house_energy: float
-    battery2grid_energy: float
-    grid2battery_energy: float
+    charged_energy: float
+    discharged_energy: float
+
+@dataclass
+class PhotovoltaicOutput:
+    energy_produced: float

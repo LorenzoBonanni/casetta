@@ -1,70 +1,82 @@
 import numpy as np
-
-from casetta.modules.base_module import BaseModule
-from casetta.utils.types import ElectricBatteryOutput
 import gymnasium as gym
+from casetta.modules.base_module import EnergyConsumer, EnergyProducer
+from casetta.utils.types import ElectricBatteryOutput
 
-class ElectricBattery(BaseModule):
+
+class ElectricBattery(EnergyProducer, EnergyConsumer):
     """
     Represents an electric battery module for energy storage and dispatch.
     """
 
-    def __init__(self, config):
-        super().__init__(config)
-        self.capacity = config['electric_battery']['capacity']  # in kWh
-        self.action_space = gym.spaces.Box(
-            low=np.array([0.0, 0.0, 0.0]),  # grid2battery, battery2house, battery2grid
-            high=np.array([1.0, 1.0, 1.0]),  # normalized percentages (0 to 1)
-        )
-        self.observation_space = gym.spaces.Box(
-            low=np.array([0.0, 0.0, 0.0, 0.0, 0.0]),  # soc, stored_energy. battery2house_energy, battery2grid_energy, grid2battery_energy
-            high=np.array([1.0, self.capacity, self.capacity, self.capacity, self.capacity]),
-        )
-        self.action_names = ['grid2battery', 'battery2house', 'battery2grid']
-        self.reset()
+    def get_state(self):
+        # Update stored_energy based on accumulated charged/discharged energy
+        # This is where the stored_energy actually changes.
+        self.stored_energy += self.state.charged_energy - self.state.discharged_energy
 
-    def reset(self):
-        self.stored_energy = 0.0  # in kWh
-        self.soc = 0.0            # State of Charge (0 to 1)
-        return ElectricBatteryOutput(
-            soc=self.soc,
-            stored_energy=self.stored_energy,
-            battery2house_energy=0.0,
-            battery2grid_energy=0.0,
-            grid2battery_energy=0.0
-        )
+        # Ensure stored_energy stays within valid bounds (0 to capacity)
+        self.stored_energy = np.clip(self.stored_energy, 0, self.capacity)
 
-    def step(self, state, action) -> ElectricBatteryOutput:
-        # Extract actions
-        charge_pct = action.get('grid2battery', 0.0)
-        discharge_house_pct = action.get('battery2house', 0.0)
-        discharge_grid_pct = action.get('battery2grid', 0.0)
-
-        # Normalize discharge percentages if they exceed 100%
-        total_discharge_pct = discharge_house_pct + discharge_grid_pct
-        if total_discharge_pct > 1.0:
-            discharge_house_pct /= total_discharge_pct
-            discharge_grid_pct /= total_discharge_pct
-
-        # Compute discharges
-        battery2house_energy = self.stored_energy * discharge_house_pct
-        battery2grid_energy = self.stored_energy * discharge_grid_pct
-        total_discharge = battery2house_energy + battery2grid_energy
-
-        # Update stored energy
-        self.stored_energy = max(self.stored_energy - total_discharge, 0.0)
-
-        # Add energy from grid
-        grid2battery_energy = self.capacity * charge_pct
-        self.stored_energy = min(self.stored_energy + grid2battery_energy, self.capacity)
-
-        # Update state of charge
+        # Calculate SoC based on the updated stored_energy
         self.soc = self.stored_energy / self.capacity
 
         return ElectricBatteryOutput(
             soc=self.soc,
             stored_energy=self.stored_energy,
-            battery2house_energy=battery2house_energy,
-            battery2grid_energy=battery2grid_energy,
-            grid2battery_energy=grid2battery_energy
+            charged_energy=self.state.charged_energy,  # Return accumulated charged energy for this step
+            discharged_energy=self.state.discharged_energy  # Return accumulated discharged energy for this step
         )
+
+    def __init__(self, config):
+        super().__init__(config)
+        self.capacity = config['modules']['electric_battery']['capacity']  # in kWh
+        self.soc = 0.0
+        self.stored_energy = 0.0
+        self.state = ElectricBatteryOutput(
+            soc=self.soc,
+            stored_energy=self.stored_energy,
+            charged_energy=0.0,
+            discharged_energy=0.0
+        )
+        self.reset()
+        self.observation_space = gym.spaces.Box(
+            low=np.array([0.0, 0.0, 0.0, 0.0]),
+            high=np.array([1.0, self.capacity, np.inf, np.inf])
+        )
+
+    def reset(self):
+        self.stored_energy = 0.0  # in kWh
+        self.soc = 0.0  # State of Charge (0 to 1)
+        # Reset the state to reflect initial conditions
+        self.state = ElectricBatteryOutput(
+            soc=self.soc,
+            stored_energy=self.stored_energy,
+            charged_energy=0.0,
+            discharged_energy=0.0
+        )
+        return self.state
+
+    def produce(self, percentage):
+        # Calculate amount to discharge based on current stored_energy
+        # This operation doesn't change self.stored_energy directly
+        amount_to_discharge = self.stored_energy * percentage
+
+        # Accumulate discharged energy in the state for the current step
+        self.state.discharged_energy += amount_to_discharge
+
+        return amount_to_discharge if self.stored_energy > 0 else 0.0
+
+    def consume(self, amount):
+        # Accumulate charged energy in the state for the current step
+        # Ensure we don't try to charge more than remaining capacity
+        self.state.charged_energy += min(amount, self.capacity - self.stored_energy - self.state.charged_energy)
+
+    def step(self, state, action):
+        # The `state` parameter here represents the state *before* this step's actions
+        self.state = ElectricBatteryOutput(
+            soc=state.soc,
+            stored_energy=state.stored_energy,
+            charged_energy=0.0,  # Reset charged energy for the new step
+            discharged_energy=0.0  # Reset discharged energy for the new step
+        )
+        self.stored_energy = state.stored_energy
