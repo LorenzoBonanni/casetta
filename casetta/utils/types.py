@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-
 @dataclass
 class BuildingOutput:
     non_shiftable_load: float
@@ -42,3 +41,8 @@ class HvacOutput:
     consumed_electric_energy: float
     consumed_thermal_energy: float
     delta_temperature: float
+
+@dataclass
+class HeatPumpOutput:
+    consumed_electric_energy: float
+    produced_thermal_energy: float

@@ -1,7 +1,7 @@
 import numpy as np
 import gymnasium as gym
 
-from casetta.modules.base_module import BaseModule
+from casetta.modules.core.base_module import BaseModule
 from casetta.utils.common import merge_dataclasses, merge_box_spaces
 
 class EnergyExchangeManager(BaseModule):
@@ -24,6 +24,9 @@ class EnergyExchangeManager(BaseModule):
                     self.action_names.append(action_name)
                     self.action_names_by_producer[pname].append(action_name)
                     self.action_names_by_consumer[cname].append(action_name)
+
+        if 'heat_pump' in self.energy_consumers:
+            self.action_names.append('source')
 
         n_actions = len(self.action_names)
         self.action_space = gym.spaces.Box(

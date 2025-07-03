@@ -1,10 +1,13 @@
-from casetta.modules.energy_exchange_manager import EnergyExchangeManager
-from casetta.modules.base_module import EnergyProducer, EnergyConsumer
-from casetta.modules.building import Building
-from casetta.modules.electric_battery import ElectricBattery
-from casetta.modules.grid import Grid
-from casetta.modules.hvac import Hvac
-from casetta.modules.photovoltaic import PhotovoltaicPanel
+from casetta.modules.core.energy_consumer import EnergyConsumer
+from casetta.modules.core.energy_producer import EnergyProducer
+from casetta.modules.exchange.energy_exchange_manager import EnergyExchangeManager
+
+from casetta.modules.building.building import Building
+from casetta.modules.electricity.electric_battery import ElectricBattery
+from casetta.modules.electricity.grid import Grid
+from casetta.modules.thermal.heat_pump import HeatPump
+from casetta.modules.building.hvac import Hvac
+from casetta.modules.electricity.photovoltaic import PhotovoltaicPanel
 
 
 def create_modules(config):
@@ -23,6 +26,8 @@ def create_modules(config):
             modules[name] = PhotovoltaicPanel(config)
         elif name == 'hvac':
             modules[name] = Hvac(config)
+        elif name == 'heat_pump':
+            modules[name] = HeatPump(config)
         else:
             raise ValueError(f"Unknown module type: {name}")
 

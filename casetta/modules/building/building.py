@@ -3,7 +3,7 @@ import datetime
 import gymnasium as gym
 import numpy as np
 
-from casetta.modules.base_module import BaseModule, EnergyConsumer
+from casetta.modules.core.energy_consumer import EnergyConsumer
 from casetta.utils.types import BuildingOutput
 
 

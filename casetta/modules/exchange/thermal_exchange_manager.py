@@ -1,0 +1,1 @@
+# TODO implement the thermal exchange manager

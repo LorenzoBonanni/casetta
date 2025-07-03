@@ -19,17 +19,3 @@ class BaseModule(abc.ABC):
     @abc.abstractmethod
     def get_state(self):
         pass
-
-class EnergyConsumer(BaseModule):
-
-    @abc.abstractmethod
-    def consume(self, amount):
-        """Input a specified amount of energy."""
-        pass
-
-class EnergyProducer(BaseModule):
-
-    @abc.abstractmethod
-    def produce(self, percentage):
-        """Output energy based on the given percentage of the maximum capacity."""
-        pass

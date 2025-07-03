@@ -17,6 +17,9 @@
         },
         "hvac": {
             "power_rating": 2.0
+        },
+        "heat_pump": {
+            "power_rating": 2.0
         }
     }
 }

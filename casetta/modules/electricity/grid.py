@@ -1,7 +1,8 @@
 import gymnasium as gym
 import numpy as np
 
-from casetta.modules.base_module import EnergyConsumer, EnergyProducer
+from casetta.modules.core.energy_consumer import EnergyConsumer
+from casetta.modules.core.energy_producer import EnergyProducer
 from casetta.utils.types import GridOutput
 
 
