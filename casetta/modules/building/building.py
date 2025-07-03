@@ -87,7 +87,7 @@ class Building(EnergyConsumer):
         self.state.consumed_electric_energy = self.in_energy
         return self.state
 
-    def consume(self, amount):
+    def consume_electric_energy(self, amount):
         self.in_energy += amount
 
     def _generate_irradiance_profile(self):

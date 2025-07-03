@@ -17,7 +17,7 @@ class Hvac(EnergyConsumer):
             high=np.array([np.inf, np.inf, np.inf]),
         )
 
-    def consume(self, amount):
+    def consume_electric_energy(self, amount):
         self.consumed_electric_energy += amount
 
     def reset(self):

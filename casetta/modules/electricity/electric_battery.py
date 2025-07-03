@@ -58,7 +58,7 @@ class ElectricBattery(EnergyProducer, EnergyConsumer):
         )
         return self.state
 
-    def produce(self, percentage):
+    def produce_electric_energy(self, percentage):
         # Calculate amount to discharge based on current stored_energy
         # This operation doesn't change self.stored_energy directly
         amount_to_discharge = self.stored_energy * percentage
@@ -68,7 +68,7 @@ class ElectricBattery(EnergyProducer, EnergyConsumer):
 
         return amount_to_discharge if self.stored_energy > 0 else 0.0
 
-    def consume(self, amount):
+    def consume_electric_energy(self, amount):
         # Accumulate charged energy in the state for the current step
         # Ensure we don't try to charge more than remaining capacity
         self.state.charged_energy += min(amount, self.capacity - self.stored_energy - self.state.charged_energy)

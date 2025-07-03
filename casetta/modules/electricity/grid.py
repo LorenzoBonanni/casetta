@@ -44,11 +44,11 @@ class Grid(EnergyConsumer, EnergyProducer):
             bought_energy=0.0
         )
 
-    def consume(self, amount):
+    def consume_electric_energy(self, amount):
         """Sell energy to the grid."""
         self.state.sold_energy += amount
 
-    def produce(self, percentage):
+    def produce_electric_energy(self, percentage):
         """Buy energy from the grid based on the percentage of maximum power."""
         quantity = self.max_power * percentage  # kW
         self.state.bought_energy += quantity

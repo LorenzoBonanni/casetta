@@ -83,7 +83,7 @@ class EnergyExchangeManager(BaseModule):
                 producer_name, consumer_name = action_name.split('_to_')
                 producer = self.energy_producers[producer_name]
                 consumer = self.energy_consumers[consumer_name]
-                produced_energy = producer.produce(percentage=value)
-                consumer.consume(produced_energy)
+                produced_energy = producer.produce_electric_energy(percentage=value)
+                consumer.consume_electric_energy(produced_energy)
 
         return self.get_state()

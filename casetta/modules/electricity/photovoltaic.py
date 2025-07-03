@@ -6,7 +6,7 @@ from casetta.utils.types import PhotovoltaicOutput
 
 class PhotovoltaicPanel(EnergyProducer):
 
-    def produce(self, percentage):
+    def produce_electric_energy(self, percentage):
         irradiation = self.irradiation
         power_output = (irradiation / 1000) * self.wp * self.num_modules   # kW
         out = percentage * power_output
