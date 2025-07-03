@@ -36,3 +36,9 @@ class ElectricBatteryOutput:
 @dataclass
 class PhotovoltaicOutput:
     energy_produced: float
+
+@dataclass
+class HvacOutput:
+    consumed_electric_energy: float
+    consumed_thermal_energy: float
+    delta_temperature: float

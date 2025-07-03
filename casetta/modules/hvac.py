@@ -1,42 +1,53 @@
-class Hvac:
-    def __init__(self, power_rating=1000, efficiency=0.9, time_step=5):
+import numpy as np
+
+from casetta.modules.base_module import EnergyConsumer
+from casetta.utils.types import HvacOutput
+import gymnasium as gym
+
+class Hvac(EnergyConsumer):
+    def __init__(self, config):
+        super().__init__(config)
+        self.power_rating = config['modules']['hvac']['power_rating']
+        self.consumed_electric_energy = 0.0
+        self.current_temp = 0.0
+        self.set_point = 0.0
+        self.observation_space = gym.spaces.Box(
+            low=np.array([0.0, -np.inf, 0.0]),
+            high=np.array([np.inf, np.inf, np.inf]),
+        )
+
+    def consume(self, amount):
+        self.consumed_electric_energy += amount
+
+    def reset(self):
         """
-        Initializes the HVAC system with a power rating and efficiency.
-
-        :param power_rating: Power rating of the HVAC system in Watts.
-        :param efficiency: Efficiency of the HVAC system (0 to 1).
+        Reset the internal state and returns a fresh HvacOutput.
         """
-        self.power_rating = power_rating
-        self.efficiency = efficiency
-        self.time_step = time_step
+        self.consumed_electric_energy = 0.0
+        self.current_temp = 0.0
+        self.set_point = 0.0
+        return HvacOutput(
+            consumed_electric_energy=0.0,
+            delta_temperature=0.0,
+            consumed_thermal_energy=0.0
+        )
 
-    def compute_energy_and_temperature(self, current, action):
+    def step(self, state, action):
         """
-        Computes the energy consumption and new delta temperature after running the HVAC.
+        Update state with external conditions and resets consumed energy counter for the step.
         """
+        self.consumed_electric_energy = 0.0
+        self.current_temp = state.building_internal_temperature
+        self.set_point = state.building_thermal_set_point
 
-        current_temp = current['internal_temperature']
-        setpoint = action['setpoint']
-
-        if current_temp == setpoint:
-            return 0.0, current_temp
-
-        # TODO: Handle power rating based on action if needed
-        power_rating = self.power_rating
-
-        # Convert time_step from minutes to hours
-        duration_hours = self.time_step / 60.0
-
-        # Assume HVAC changes temp at a rate proportional to power and efficiency
-        temp_change_rate = power_rating * self.efficiency / 10000  # °C per hour (arbitrary scaling)
-        direction = 1 if setpoint > current_temp else -1
-        temp_diff = abs(setpoint - current_temp)
-        possible_temp_change = temp_change_rate * duration_hours
-
-        actual_temp_change = min(temp_diff, possible_temp_change)
-        delta_temp = direction * actual_temp_change
-
-        # Energy consumed in kWh
-        energy_consumed = (power_rating * duration_hours) / 1000 if actual_temp_change > 0 else 0.0
-
-        return energy_consumed, delta_temp
+    def get_state(self):
+        """
+        Returns HvacOutput with current consumption and computed delta temperature.
+        """
+        direction = 1 if self.set_point >= self.current_temp else -1
+        delta_temperature = self.consumed_electric_energy / self.power_rating
+        return HvacOutput(
+            consumed_electric_energy=self.consumed_electric_energy,
+            delta_temperature=direction * delta_temperature,
+            consumed_thermal_energy=0.0
+        )

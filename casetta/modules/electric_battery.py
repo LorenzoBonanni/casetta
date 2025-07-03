@@ -74,9 +74,9 @@ class ElectricBattery(EnergyProducer, EnergyConsumer):
     def step(self, state, action):
         # The `state` parameter here represents the state *before* this step's actions
         self.state = ElectricBatteryOutput(
-            soc=state.soc,
-            stored_energy=state.stored_energy,
+            soc=state.electricbattery_soc,
+            stored_energy=state.electricbattery_stored_energy,
             charged_energy=0.0,  # Reset charged energy for the new step
             discharged_energy=0.0  # Reset discharged energy for the new step
         )
-        self.stored_energy = state.stored_energy
+        self.stored_energy = state.electricbattery_stored_energy

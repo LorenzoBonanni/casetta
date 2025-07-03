@@ -84,7 +84,7 @@ class Building(EnergyConsumer):
 
     def get_state(self):
         self.state.unmet_energy_load = max(0, self.state.non_shiftable_load - self.in_energy)
-        self.state.consumed_energy = self.in_energy
+        self.state.consumed_electric_energy = self.in_energy
         return self.state
 
     def consume(self, amount):
@@ -132,14 +132,14 @@ class Building(EnergyConsumer):
         """
         # Update current_datetime based on the state from the previous step
         self.current_datetime = datetime.datetime(
-            state.year, state.month, state.day,
-            state.hour, state.minute
+            state.building_year, state.building_month, state.building_day,
+            state.building_hour, state.building_minute
         ) + datetime.timedelta(minutes=self.time_step)
 
         hour = self.current_datetime.hour
         external_temp = self.external_temperature_profile[hour]
         # Use the internal_temperature from the previous state for calculation
-        internal_temp = self._update_internal_temperature(state.internal_temperature, external_temp)
+        internal_temp = self._update_internal_temperature(state.building_internal_temperature, external_temp)
 
         # Reset in_energy for the new step before any consumption occurs
         self.in_energy = 0.0

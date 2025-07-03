@@ -1,7 +1,11 @@
-class HotThermalEnergyStorage:
+class ThermalEnergyStorage:
+    """
+    Class representing a cold thermal energy storage system.
+    """
+
     def __init__(self, capacity: float, efficiency: float):
         """
-        Initialize the hot thermal energy storage system.
+        Initialize the cold thermal energy storage system.
 
         :param capacity: Maximum energy storage capacity in kWh.
         :param efficiency: Efficiency of the storage system (0 to 1).

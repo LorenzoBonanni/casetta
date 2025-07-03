@@ -1,3 +1,4 @@
+import json
 import random
 from copy import deepcopy
 from typing import SupportsFloat, Any
@@ -11,33 +12,14 @@ from casetta.utils.modules_factory import create_modules
 
 class Casetta(gym.Env):
     """
-    A smart building simulation environment with:
-    - Building energy demand & internal conditions
-    - Battery storage system
-    - Grid interaction for buying/selling energy
+    A smart building simulation environment
     """
 
-    def __init__(self):
+    def __init__(self, config_path: str):
         super().__init__()
         self.time_step = 5  # minutes
-
-        self.config = {
-            'time_step': self.time_step,
-            'modules': {
-                'grid': {
-                    'buy_energy': 0.1,  # $/kWh
-                    'sell_energy': 0.05,  # $/kWh
-                },
-                'electric_battery': {
-                    'capacity': 10.0,  # kWh
-                },
-                'building': {
-                    'max_power': 3.0  # kW
-                }
-            }
-        }
-
         # Initialize modules
+        self.config = json.load(open(config_path))
         self.energy_exchange_manager = create_modules(self.config)
 
         self.observation_space = self.energy_exchange_manager.observation_space

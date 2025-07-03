@@ -17,7 +17,6 @@ def merge_dataclasses(name: str, instances: list[Any]) -> Any:
     Returns:
         Any: A new dataclass instance with combined fields and values.
     """
-    seen = set()
     new_fields = []
     new_values = {}
 
@@ -26,19 +25,17 @@ def merge_dataclasses(name: str, instances: list[Any]) -> Any:
             raise TypeError(f"{obj} is not a dataclass instance")
 
         for f in fields(obj):
-            if f.name in seen:
-                raise ValueError(f"Duplicate field name '{f.name}' found in multiple dataclasses.")
-            seen.add(f.name)
+            new_name = f"{str(obj).split('Output(')[0].lower()}_{f.name}"  # Prefix with the class name
 
             # Handle default values
             if f.default is not MISSING:
-                new_fields.append((f.name, f.type, f.default))
+                new_fields.append((new_name, f.type, f.default))
             elif f.default_factory is not MISSING:  # type: ignore
-                new_fields.append((f.name, f.type, field(default_factory=f.default_factory)))  # type: ignore
+                new_fields.append((new_name, f.type, field(default_factory=f.default_factory)))  # type: ignore
             else:
-                new_fields.append((f.name, f.type))
+                new_fields.append((new_name, f.type))
 
-            new_values[f.name] = getattr(obj, f.name)
+            new_values[new_name] = getattr(obj, f.name)
 
     # Create the new dataclass type
     Combined = make_dataclass(name, new_fields)

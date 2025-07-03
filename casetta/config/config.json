@@ -1,0 +1,22 @@
+{
+    "time_step": 5,
+    "modules": {
+        "grid": {
+            "buy_energy": 0.1,
+            "sell_energy": 0.05
+        },
+        "electric_battery": {
+            "capacity": 10.0
+        },
+        "building": {
+            "max_power": 3.0
+        },
+        "photovoltaic": {
+            "num_modules": 1,
+            "rated_power": 2.0
+        },
+        "hvac": {
+            "power_rating": 2.0
+        }
+    }
+}
