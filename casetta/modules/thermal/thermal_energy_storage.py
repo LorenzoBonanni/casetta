@@ -1,42 +1,78 @@
-class ThermalEnergyStorage:
+import numpy as np
+import gymnasium as gym
+from casetta.modules.core.thermal_consumer import ThermalConsumer
+from casetta.modules.core.thermal_producer import ThermalProducer
+from casetta.utils.types import ThermalEnergyStorageOutput
+
+
+class ThermalEnergyStorage(ThermalConsumer, ThermalProducer):
     """
-    Class representing a cold thermal energy storage system.
+    Class representing a thermal energy storage system.
     """
 
-    def __init__(self, capacity: float, efficiency: float):
-        """
-        Initialize the cold thermal energy storage system.
+    def consume_thermal_energy(self, amount):
+        self.state.charged_energy += min(amount, self.capacity - self.stored_energy - self.state.charged_energy)
 
-        :param capacity: Maximum energy storage capacity in kWh.
-        :param efficiency: Efficiency of the storage system (0 to 1).
-        """
-        self.capacity = capacity
-        self.efficiency = efficiency
+    def produce_thermal_energy(self, percentage):
+        # Calculate amount to discharge based on current stored_energy
+        # This operation doesn't change self.stored_energy directly
+        amount_to_discharge = self.stored_energy * percentage
+
+        # Accumulate discharged energy in the state for the current step
+        self.state.discharged_energy += amount_to_discharge
+
+        return amount_to_discharge
+
+    def reset(self):
+        self.stored_energy = 0.0  # in kJ
+        self.soc = 0.0  # State of Charge (0 to 1)
+        # Reset the state to reflect initial conditions
+        self.state = ThermalEnergyStorageOutput(
+            soc=self.soc,
+            stored_energy=self.stored_energy,
+            charged_energy=0.0,
+            discharged_energy=0.0
+        )
+        return self.state
+
+    def step(self, state, action):
+        self.state = ThermalEnergyStorageOutput(
+            soc=state.thermalenergystorage_soc,
+            stored_energy=state.thermalenergystorage_stored_energy,
+            charged_energy=0.0,  # Reset charged energy for the new step
+            discharged_energy=0.0  # Reset discharged energy for the new step
+        )
+        self.stored_energy = state.thermalenergystorage_stored_energy
+
+    def get_state(self):
+        self.stored_energy += self.state.charged_energy - self.state.discharged_energy
+
+        # Ensure stored_energy stays within valid bounds (0 to capacity)
+        self.stored_energy = np.clip(self.stored_energy, 0, self.capacity)
+
+        # Calculate SoC based on the updated stored_energy
+        self.soc = self.stored_energy / self.capacity
+
+        return ThermalEnergyStorageOutput(
+            soc=self.soc,
+            stored_energy=self.stored_energy,
+            charged_energy=self.state.charged_energy,  # Return accumulated charged energy for this step
+            discharged_energy=self.state.discharged_energy  # Return accumulated discharged energy for this step
+        )
+
+    def __init__(self, config):
+        super().__init__(config)
+        self.capacity = config['modules']['thermal_storage']['capacity'] # kJ
+        self.stored_energy = 0.0
         self.soc = 0.0
-        self.current_energy = 0.0  # Current stored energy in kWh
-
-    def store_energy(self, energy: float) -> None:
-        """
-        Store energy in the system.
-
-        :param energy: Amount of energy to store in kWh.
-        """
-        if energy < 0:
-            raise ValueError("Energy to store must be non-negative.")
-        self.current_energy = min(self.capacity, self.current_energy + energy)
-        self.soc = self.current_energy / self.capacity
-
-    def retrieve_energy(self, energy: float) -> float:
-        """
-        Retrieve energy from the system.
-
-        :param energy: Amount of energy to retrieve in kWh.
-        :return: Amount of energy actually retrieved in kWh.
-        """
-        if energy < 0:
-            raise ValueError("Energy to retrieve must be non-negative.")
-
-        retrieved_energy = min(energy, self.current_energy * self.efficiency)
-        self.current_energy -= retrieved_energy / self.efficiency
-        self.soc = self.current_energy / self.capacity
-        return retrieved_energy
+        self.state = None
+        self.state = ThermalEnergyStorageOutput(
+            soc=self.soc,
+            stored_energy=self.stored_energy,
+            charged_energy=0.0,
+            discharged_energy=0.0
+        )
+        self.observation_space = gym.spaces.Box(
+            low=np.array([0.0, 0.0, 0.0, 0.0]),
+            high=np.array([1.0, self.capacity, np.inf, np.inf])
+        )

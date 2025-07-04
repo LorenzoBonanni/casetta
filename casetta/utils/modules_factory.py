@@ -1,19 +1,30 @@
 from casetta.modules.core.energy_consumer import EnergyConsumer
 from casetta.modules.core.energy_producer import EnergyProducer
+from casetta.modules.core.hot_water_consumer import HotWaterConsumer
+from casetta.modules.core.hot_water_producer import HotWaterProducer
+from casetta.modules.core.thermal_consumer import ThermalConsumer
+from casetta.modules.core.thermal_producer import ThermalProducer
 from casetta.modules.exchange.energy_exchange_manager import EnergyExchangeManager
-
 from casetta.modules.building.building import Building
 from casetta.modules.electricity.electric_battery import ElectricBattery
 from casetta.modules.electricity.grid import Grid
+from casetta.modules.exchange.hot_water_exchange_manager import HotWaterExchangeManager
+from casetta.modules.exchange.thermal_exchange_manager import ThermalExchangeManager
+from casetta.modules.thermal.domestic_hot_water_tank import DomesticHotWaterTank
 from casetta.modules.thermal.heat_pump import HeatPump
 from casetta.modules.building.hvac import Hvac
 from casetta.modules.electricity.photovoltaic import PhotovoltaicPanel
+from casetta.modules.thermal.thermal_energy_storage import ThermalEnergyStorage
 
 
 def create_modules(config):
     modules = {}
     energy_producers = {}
     energy_consumers = {}
+    thermal_consumers = {}
+    thermal_producer = {}
+    hot_water_consumers = {}
+    hot_water_producer = {}
 
     for name in config['modules']:
         if name == 'grid':
@@ -28,6 +39,10 @@ def create_modules(config):
             modules[name] = Hvac(config)
         elif name == 'heat_pump':
             modules[name] = HeatPump(config)
+        elif name == 'thermal_storage':
+            modules[name] = ThermalEnergyStorage(config)
+        elif name == 'dhw_tank':
+            modules[name] = DomesticHotWaterTank(config)
         else:
             raise ValueError(f"Unknown module type: {name}")
 
@@ -37,11 +52,33 @@ def create_modules(config):
         if isinstance(modules[name], EnergyConsumer):
             energy_consumers[name] = modules[name]
 
+        if isinstance(modules[name], ThermalProducer):
+            thermal_producer[name] = modules[name]
+
+        if isinstance(modules[name], ThermalConsumer):
+            thermal_consumers[name] = modules[name]
+
+        if isinstance(modules[name], HotWaterProducer):
+            hot_water_producer[name] = modules[name]
+
+        if isinstance(modules[name], HotWaterConsumer):
+            hot_water_consumers[name] = modules[name]
+
+    if len(thermal_producer) > 0:
+        assert len(thermal_consumers) > 0, "Thermal producers require at least one thermal consumer"
+
     modules['energy_exchange'] = EnergyExchangeManager(
         energy_producers=energy_producers,
-        energy_consumers=energy_consumers,
-        config={}
+        energy_consumers=energy_consumers
+    )
+    modules['thermal_exchange'] = ThermalExchangeManager(
+        thermal_producers=thermal_producer,
+        thermal_consumers=thermal_consumers
+    )
+    modules['hot_water_exchange'] = HotWaterExchangeManager(
+        hot_water_producers=hot_water_producer,
+        hot_water_consumers=hot_water_consumers
     )
 
 
-    return modules['energy_exchange']
+    return modules

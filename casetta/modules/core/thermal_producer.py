@@ -3,7 +3,7 @@ import abc
 from casetta.modules.core.base_module import BaseModule
 
 
-class EnergyProducer(BaseModule):
+class ThermalProducer(BaseModule):
 
     @abc.abstractmethod
     def produce_thermal_energy(self, percentage):

@@ -1,9 +1,14 @@
+import numpy as np
+
 from casetta.modules.core.energy_consumer import EnergyConsumer
+from casetta.modules.core.thermal_producer import ThermalProducer
 from casetta.utils.types import HeatPumpOutput
+import gymnasium as gym
 
+class HeatPump(EnergyConsumer, ThermalProducer):
+    def produce_thermal_energy(self, percentage):
+        return percentage * (self.consumed_electric_energy / self.power_rating)
 
-# TODO: add thermal producer
-class HeatPump(EnergyConsumer):
     def consume_electric_energy(self, amount):
         self.consumed_electric_energy += amount
 
@@ -16,7 +21,7 @@ class HeatPump(EnergyConsumer):
     def step(self, state, action):
         source = round(action['source'])  # 'air', 'ground'
         ground_temperature = state.building_ground_temperature
-        air_temperature = state.builing_air_temperature
+        air_temperature = state.building_external_temperature
         self.input_temperature = ground_temperature if source == 0 else air_temperature
         self.consumed_electric_energy = 0.0
 
@@ -31,3 +36,7 @@ class HeatPump(EnergyConsumer):
         self.power_rating = config['modules']['heat_pump']['power_rating']  # kW
         self.input_temperature = None
         self.consumed_electric_energy = 0.0
+        self.observation_space = gym.spaces.Box(
+            low=np.array([0.0, 0.0]),
+            high=np.array([np.inf, np.inf])
+        )

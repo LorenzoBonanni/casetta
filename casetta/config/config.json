@@ -20,6 +20,12 @@
         },
         "heat_pump": {
             "power_rating": 2.0
+        },
+        "thermal_storage": {
+            "capacity": 10.0
+        },
+        "dhw_tank": {
+            "capacity": 10.0
         }
     }
 }

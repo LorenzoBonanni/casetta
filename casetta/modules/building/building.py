@@ -1,13 +1,15 @@
 
 import datetime
+
 import gymnasium as gym
 import numpy as np
 
 from casetta.modules.core.energy_consumer import EnergyConsumer
+from casetta.modules.core.hot_water_consumer import HotWaterConsumer
 from casetta.utils.types import BuildingOutput
 
 
-class Building(EnergyConsumer):
+class Building(EnergyConsumer, HotWaterConsumer):
     """
     Represents the building and its interaction with the environment and occupants.
     """
@@ -36,6 +38,7 @@ class Building(EnergyConsumer):
         self.current_datetime = None
         self.internal_temperature = None
         self.in_energy = 0.0
+        self.in_hot_water = 0.0
         self.state = None # Initialize state here
 
         self._init_spaces()
@@ -62,7 +65,8 @@ class Building(EnergyConsumer):
                 min_time.hour,  # hour
                 min_time.minute,  # minute
                 0.0,  # domestic_hot_water_request
-                0.0  # unmet_energy_load
+                0.0,  # unmet_energy_load
+                0.0  # unmet_hot_water_request
             ]),
             high=np.array([
                 self.max_power,  # non_shiftable_load
@@ -78,14 +82,24 @@ class Building(EnergyConsumer):
                 max_time.hour,  # hour
                 max_time.minute,  # minute
                 100,  # domestic_hot_water_request
+                np.inf,
                 np.inf
             ]),
         )
 
     def get_state(self):
         self.state.unmet_energy_load = max(0, self.state.non_shiftable_load - self.in_energy)
+        self.state.unmet_hot_water_request = max(0, self.state.domestic_hot_water_request - self.in_hot_water)
         self.state.consumed_electric_energy = self.in_energy
         return self.state
+
+    def consume_hot_water(self, amount):
+        """
+        Consume hot water for domestic use.
+        Args:
+            amount (float): Amount of hot water consumed.
+        """
+        self.in_hot_water += amount
 
     def consume_electric_energy(self, amount):
         self.in_energy += amount
@@ -161,7 +175,8 @@ class Building(EnergyConsumer):
             minute=self.current_datetime.minute,
             domestic_hot_water_request=self.dhw_profile[hour],
             unmet_energy_load=0.0,  # Will be calculated in get_state
-            consumed_energy=0.0     # Will be calculated in get_state
+            consumed_energy=0.0,     # Will be calculated in get_state
+            unmet_hot_water_request=0.0 # Will be calculated in get_state
         )
 
 
@@ -191,7 +206,8 @@ class Building(EnergyConsumer):
             minute=self.current_datetime.minute,
             domestic_hot_water_request=self.dhw_profile[hour],
             unmet_energy_load=0.0,
-            consumed_energy=0.0
+            consumed_energy=0.0,
+            unmet_hot_water_request=0.0
         )
         return self.state
 

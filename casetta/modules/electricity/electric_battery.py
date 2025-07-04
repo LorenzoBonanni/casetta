@@ -1,6 +1,5 @@
 import numpy as np
 import gymnasium as gym
-
 from casetta.modules.core.energy_consumer import EnergyConsumer
 from casetta.modules.core.energy_producer import EnergyProducer
 from casetta.utils.types import ElectricBatteryOutput
@@ -40,7 +39,6 @@ class ElectricBattery(EnergyProducer, EnergyConsumer):
             charged_energy=0.0,
             discharged_energy=0.0
         )
-        self.reset()
         self.observation_space = gym.spaces.Box(
             low=np.array([0.0, 0.0, 0.0, 0.0]),
             high=np.array([1.0, self.capacity, np.inf, np.inf])

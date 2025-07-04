@@ -16,6 +16,7 @@ class BuildingOutput:
     minute: int
     domestic_hot_water_request: float
     unmet_energy_load: float
+    unmet_hot_water_request: float
     consumed_energy: float
 
 @dataclass
@@ -46,3 +47,17 @@ class HvacOutput:
 class HeatPumpOutput:
     consumed_electric_energy: float
     produced_thermal_energy: float
+
+@dataclass
+class ThermalEnergyStorageOutput:
+    soc: float
+    stored_energy: float
+    charged_energy: float
+    discharged_energy: float
+
+@dataclass
+class DomesticHotWaterTankOutput:
+    soc: float
+    charged_energy: float
+    discharged_water: float
+    stored_water: float

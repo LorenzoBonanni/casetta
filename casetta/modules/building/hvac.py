@@ -1,17 +1,21 @@
 import numpy as np
 
 from casetta.modules.core.energy_consumer import EnergyConsumer
+from casetta.modules.core.thermal_consumer import ThermalConsumer
 from casetta.utils.types import HvacOutput
 import gymnasium as gym
 
-# Todo add thermal consumer
-class Hvac(EnergyConsumer):
+class Hvac(EnergyConsumer, ThermalConsumer):
+    def consume_thermal_energy(self, amount):
+        self.consumed_thermal_energy += amount
+
     def __init__(self, config):
         super().__init__(config)
         self.power_rating = config['modules']['hvac']['power_rating']
         self.consumed_electric_energy = 0.0
         self.current_temp = 0.0
         self.set_point = 0.0
+        self.consumed_thermal_energy = 0.0
         self.observation_space = gym.spaces.Box(
             low=np.array([0.0, -np.inf, 0.0]),
             high=np.array([np.inf, np.inf, np.inf]),
@@ -27,6 +31,7 @@ class Hvac(EnergyConsumer):
         self.consumed_electric_energy = 0.0
         self.current_temp = 0.0
         self.set_point = 0.0
+        self.consumed_thermal_energy = 0.0
         return HvacOutput(
             consumed_electric_energy=0.0,
             delta_temperature=0.0,
@@ -47,8 +52,9 @@ class Hvac(EnergyConsumer):
         """
         direction = 1 if self.set_point >= self.current_temp else -1
         delta_temperature = self.consumed_electric_energy / self.power_rating
+
         return HvacOutput(
             consumed_electric_energy=self.consumed_electric_energy,
             delta_temperature=direction * delta_temperature,
-            consumed_thermal_energy=0.0
+            consumed_thermal_energy=self.consumed_thermal_energy
         )
