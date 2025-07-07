@@ -50,7 +50,7 @@ class BaseExchangeManager(ABC):
         action_rebalanced = self._rebalance_action(action)
         for name, value in action_rebalanced.items():
             if value > 0.0 and "_to_" in name:
-                name = name.replace(self.prefix + "_", "")
+                name = name[len(self.prefix) + 1:]
                 producer_name, consumer_name = name.split('_to_')
                 producer = self.producers[producer_name]
                 consumer = self.consumers[consumer_name]
