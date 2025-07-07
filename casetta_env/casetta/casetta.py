@@ -1,4 +1,5 @@
 import json
+import os
 import random
 from copy import deepcopy
 from typing import SupportsFloat, Any
@@ -7,8 +8,8 @@ import gymnasium as gym
 import numpy as np
 from gymnasium.core import ActType, ObsType
 
-from casetta.utils.common import merge_dataclasses, merge_box_spaces
-from casetta.utils.modules_factory import create_modules
+from casetta_env.utils.common import merge_dataclasses, merge_box_spaces
+from casetta_env.utils.modules_factory import create_modules
 
 
 class Casetta(gym.Env):
@@ -16,8 +17,10 @@ class Casetta(gym.Env):
     A smart building simulation environment
     """
 
-    def __init__(self, config_path: str):
+    def __init__(self, config_path = 'config/config.json'):
         super().__init__()
+        cwd = os.getcwd()
+        config_path = os.path.join(cwd, 'casetta_env/casetta', config_path)
         self.time_step = 5  # minutes
         # Initialize modules
         self.config = json.load(open(config_path))

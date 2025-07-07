@@ -1,8 +1,9 @@
 import numpy as np
 import gymnasium as gym
-from casetta.modules.core.thermal_consumer import ThermalConsumer
-from casetta.modules.core.thermal_producer import ThermalProducer
-from casetta.utils.types import ThermalEnergyStorageOutput
+
+from casetta_env.modules.core.thermal_consumer import ThermalConsumer
+from casetta_env.modules.core.thermal_producer import ThermalProducer
+from casetta_env.utils.types import ThermalEnergyStorageOutput
 
 
 class ThermalEnergyStorage(ThermalConsumer, ThermalProducer):

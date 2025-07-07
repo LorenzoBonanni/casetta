@@ -1,7 +1,7 @@
 import gymnasium as gym
 
-from casetta.modules.core.energy_producer import EnergyProducer
-from casetta.utils.types import PhotovoltaicOutput
+from casetta_env.modules.core.energy_producer import EnergyProducer
+from casetta_env.utils.types import PhotovoltaicOutput
 
 
 class PhotovoltaicPanel(EnergyProducer):

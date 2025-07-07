@@ -4,9 +4,9 @@ import datetime
 import gymnasium as gym
 import numpy as np
 
-from casetta.modules.core.energy_consumer import EnergyConsumer
-from casetta.modules.core.hot_water_consumer import HotWaterConsumer
-from casetta.utils.types import BuildingOutput
+from casetta_env.modules.core.energy_consumer import EnergyConsumer
+from casetta_env.modules.core.hot_water_consumer import HotWaterConsumer
+from casetta_env.utils.types import BuildingOutput
 
 
 class Building(EnergyConsumer, HotWaterConsumer):

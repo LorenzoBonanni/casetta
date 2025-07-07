@@ -1,6 +1,6 @@
 import abc
 
-from casetta.modules.core.base_module import BaseModule
+from casetta_env.modules.core.base_module import BaseModule
 
 
 class EnergyConsumer(BaseModule):

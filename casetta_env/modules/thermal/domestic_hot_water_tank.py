@@ -1,9 +1,12 @@
 import numpy as np
 
-from casetta.modules.core.hot_water_producer import HotWaterProducer
-from casetta.modules.core.thermal_consumer import ThermalConsumer
-from casetta.utils.types import DomesticHotWaterTankOutput
+
 import gymnasium as gym
+
+from casetta_env.modules.core.hot_water_producer import HotWaterProducer
+from casetta_env.modules.core.thermal_consumer import ThermalConsumer
+from casetta_env.utils.types import DomesticHotWaterTankOutput
+
 
 class DomesticHotWaterTank(ThermalConsumer, HotWaterProducer):
     def consume_thermal_energy(self, amount):

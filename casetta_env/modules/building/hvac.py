@@ -1,9 +1,12 @@
 import numpy as np
 
-from casetta.modules.core.energy_consumer import EnergyConsumer
-from casetta.modules.core.thermal_consumer import ThermalConsumer
-from casetta.utils.types import HvacOutput
+
 import gymnasium as gym
+
+from casetta_env.modules.core.energy_consumer import EnergyConsumer
+from casetta_env.modules.core.thermal_consumer import ThermalConsumer
+from casetta_env.utils.types import HvacOutput
+
 
 class Hvac(EnergyConsumer, ThermalConsumer):
     def consume_thermal_energy(self, amount):

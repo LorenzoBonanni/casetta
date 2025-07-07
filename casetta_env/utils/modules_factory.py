@@ -1,20 +1,20 @@
-from casetta.modules.core.energy_consumer import EnergyConsumer
-from casetta.modules.core.energy_producer import EnergyProducer
-from casetta.modules.core.hot_water_consumer import HotWaterConsumer
-from casetta.modules.core.hot_water_producer import HotWaterProducer
-from casetta.modules.core.thermal_consumer import ThermalConsumer
-from casetta.modules.core.thermal_producer import ThermalProducer
-from casetta.modules.exchange.energy_exchange_manager import EnergyExchangeManager
-from casetta.modules.building.building import Building
-from casetta.modules.electricity.electric_battery import ElectricBattery
-from casetta.modules.electricity.grid import Grid
-from casetta.modules.exchange.hot_water_exchange_manager import HotWaterExchangeManager
-from casetta.modules.exchange.thermal_exchange_manager import ThermalExchangeManager
-from casetta.modules.thermal.domestic_hot_water_tank import DomesticHotWaterTank
-from casetta.modules.thermal.heat_pump import HeatPump
-from casetta.modules.building.hvac import Hvac
-from casetta.modules.electricity.photovoltaic import PhotovoltaicPanel
-from casetta.modules.thermal.thermal_energy_storage import ThermalEnergyStorage
+from casetta_env.modules.building.building import Building
+from casetta_env.modules.building.hvac import Hvac
+from casetta_env.modules.core.energy_consumer import EnergyConsumer
+from casetta_env.modules.core.energy_producer import EnergyProducer
+from casetta_env.modules.core.hot_water_consumer import HotWaterConsumer
+from casetta_env.modules.core.hot_water_producer import HotWaterProducer
+from casetta_env.modules.core.thermal_consumer import ThermalConsumer
+from casetta_env.modules.core.thermal_producer import ThermalProducer
+from casetta_env.modules.electricity.electric_battery import ElectricBattery
+from casetta_env.modules.electricity.grid import Grid
+from casetta_env.modules.electricity.photovoltaic import PhotovoltaicPanel
+from casetta_env.modules.exchange.energy_exchange_manager import EnergyExchangeManager
+from casetta_env.modules.exchange.hot_water_exchange_manager import HotWaterExchangeManager
+from casetta_env.modules.exchange.thermal_exchange_manager import ThermalExchangeManager
+from casetta_env.modules.thermal.domestic_hot_water_tank import DomesticHotWaterTank
+from casetta_env.modules.thermal.heat_pump import HeatPump
+from casetta_env.modules.thermal.thermal_energy_storage import ThermalEnergyStorage
 
 
 def create_modules(config):

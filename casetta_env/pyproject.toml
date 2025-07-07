@@ -1,0 +1,21 @@
+[project]
+name = "casetta"
+version = "0.0.1"
+description = "Modular reinforcement learning environment, designed to simulate energy flows in a smart building"
+authors = [{ name = "Lorenzo Bonanni", email = "lorenzo.bonanni@univr.it" }]
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib==3.10.0",
+    "numpy==1.26.4",
+    "gymnasium==0.28.1",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["casetta"]
+
+[project.entry-points."gymnasium.envs"]
+Casetta-v0 = "casetta.casetta:Casetta"

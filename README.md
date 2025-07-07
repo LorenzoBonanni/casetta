@@ -35,12 +35,12 @@ casetta/
 1. Clone the repository:
    ```sh
    git clone https://github.com/your-org/casetta.git
-   cd casetta
+   cd casetta_env
    ```
 2. Install dependencies (using Conda/miniconda):
    ```sh
    conda env create -f environment.yml
-   conda activate casetta
+   conda activate casetta_env
    ```
 3. Run the environment:
    ```sh

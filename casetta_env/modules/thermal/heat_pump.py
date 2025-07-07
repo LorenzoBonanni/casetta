@@ -1,9 +1,12 @@
 import numpy as np
 
-from casetta.modules.core.energy_consumer import EnergyConsumer
-from casetta.modules.core.thermal_producer import ThermalProducer
-from casetta.utils.types import HeatPumpOutput
+
 import gymnasium as gym
+
+from casetta_env.modules.core.energy_consumer import EnergyConsumer
+from casetta_env.modules.core.thermal_producer import ThermalProducer
+from casetta_env.utils.types import HeatPumpOutput
+
 
 class HeatPump(EnergyConsumer, ThermalProducer):
     def produce_thermal_energy(self, percentage):

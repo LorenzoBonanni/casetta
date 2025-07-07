@@ -1,4 +1,4 @@
-from casetta.modules.core.base_exchange_manager import BaseExchangeManager
+from casetta_env.modules.core.base_exchange_manager import BaseExchangeManager
 
 
 class ThermalExchangeManager(BaseExchangeManager):

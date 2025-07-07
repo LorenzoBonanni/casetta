@@ -1,8 +1,9 @@
 import numpy as np
 import gymnasium as gym
-from casetta.modules.core.energy_consumer import EnergyConsumer
-from casetta.modules.core.energy_producer import EnergyProducer
-from casetta.utils.types import ElectricBatteryOutput
+
+from casetta_env.modules.core.energy_consumer import EnergyConsumer
+from casetta_env.modules.core.energy_producer import EnergyProducer
+from casetta_env.utils.types import ElectricBatteryOutput
 
 
 class ElectricBattery(EnergyProducer, EnergyConsumer):
