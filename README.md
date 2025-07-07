@@ -73,11 +73,11 @@ casetta/
 
 ## 🛠️ Adding a New Module
 
-1. **Create** your module class in the relevant folder, inheriting from a base class in `core/`.
-2. **Implement** required methods: `reset()`, `step()`, `get_state()`, and optionally `consume()` / `produce()`.
-3. **Register** your module in `modules_factory.py`.
-4. **Update** the `config.json` file as needed.
-
+1. **Create** your module class in the appropriate subfolder under `modules/`, inheriting from a base class in `modules/core/`.
+2. **Implement** the required methods based on the selected base class (e.g., `reset()`, `step()`, `get_state()`, `consume()`, `produce()`).
+3. **Define** the module's **output data structure** in `utils/types.py` by adding a new `@dataclass` or extending an existing one.
+4. **Register** the new module in `utils/modules_factory.py`.
+5. **Update** the relevant configuration in `config/config.json` to include the module and its parameters.
 ---
 
 ## 🤝 Contributing
